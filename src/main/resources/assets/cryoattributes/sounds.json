@@ -1,0 +1,16 @@
+{
+	"item.invulnerability_use": {
+		"subtitle": "subtitle.item.invulnerability_use",
+		"sounds": [
+			"cryoattributes:item/invulnerability_use"
+		]
+	},
+	"gui.skilltree": {
+		"sounds": [
+			{
+				"name": "cryoattributes:gui/skilltree",
+				"stream": true
+			}
+		]
+	}
+}

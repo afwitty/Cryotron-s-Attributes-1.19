@@ -1,0 +1,10 @@
+{
+  "key.category.ctattributes": "Cryotron's Attributes",
+  "key.ctattributes.charsheet": "Open Character Sheet",
+  "key.ctattributes.skilltree": "Open Skill Tree",
+
+  "gui.ctattributes.characterskilltree.title": "Character Skill Tree",
+  "gui.ctattributes.characterskilltree.exit": "Close Tree (Esc)",
+
+  "item.cryoattributes.totem_of_invulnerability": "Totem of Invulnerability"  
+}
