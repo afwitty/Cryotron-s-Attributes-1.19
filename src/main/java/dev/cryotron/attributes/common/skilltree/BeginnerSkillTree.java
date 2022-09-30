@@ -1,6 +1,5 @@
 package dev.cryotron.attributes.common.skilltree;
 
-import dev.cryotron.attributes.common.util.SidedReference;
 import net.minecraft.resources.ResourceLocation;
 
 public class BeginnerSkillTree {
