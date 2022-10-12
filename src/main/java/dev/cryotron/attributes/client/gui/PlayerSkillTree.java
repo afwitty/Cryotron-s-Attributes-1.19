@@ -1,5 +1,11 @@
 package dev.cryotron.attributes.client.gui;
 
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -10,26 +16,38 @@ import com.mojang.bridge.game.Language;
 
 import dev.cryotron.attributes.CTAttributes;
 import dev.cryotron.attributes.client.KeySetup;
+import dev.cryotron.attributes.common.skilltree.SkillTree;
+import dev.cryotron.attributes.common.skilltree.SkillTreeReader;
 import dev.cryotron.attributes.setup.deferredregistries.RegisteredSounds;
+import dev.cryotron.attributes.util.MapStream;
+//import dev.cryotron.utilities.util.*;
+import dev.cryotron.utilities.util.aoa.RenderUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.LogicalSide;
 
 public class PlayerSkillTree extends Screen {
 
 	public static Language currentLanguage = Minecraft.getInstance().getLanguageManager().getSelected();
 	public static final ResourceLocation SS_BACKGROUND_LOCATION = new ResourceLocation(CTAttributes.ID,"textures/gui/ss_options_background.png");
+	public static final ResourceLocation SS_NODE = new ResourceLocation(CTAttributes.ID,"textures/gui/skillnode.png");
 
 	static SoundInstance sound = SimpleSoundInstance.forUI(RegisteredSounds.SKILL_TREE.get(), 1.0f);
 	private static int soundTick = 0;
 	private float xMouse;
 	private float yMouse;
+	private double scrollX;
+	private double scrollY;
 	
 	protected static PlayerSkillTree instance;
 	protected Player player;
@@ -66,7 +84,7 @@ public class PlayerSkillTree extends Screen {
 		yMouse = mouseY;
 		
 		renderDirtBackground(0);
-
+		renderNodes(matrix);
 		//RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 		
 		renderTooltip(matrix, title, 5, 0);
@@ -78,10 +96,15 @@ public class PlayerSkillTree extends Screen {
 		
 		RenderSystem.setShaderColor(0, 0, 1, 1);
 		renderTooltip(matrix, exit, (int) (((float)this.width)*2.22), 5); // There is gotta be a better way to place the "Esc" tip in the Skill Tree. -CT
+		
 
 		
 		//RenderSystem.setShaderColor(1, 1, 1, 1);
 		matrix.popPose();
+		
+		
+
+
 	}
 	
 	@Override
@@ -165,4 +188,33 @@ public class PlayerSkillTree extends Screen {
 
 	      return super.mouseClicked(p_97343_, p_97344_, p_97345_);
 	   }
+   
+   public void renderNodes(PoseStack matrix) {
+	   // TODO: Find a way to render a node.
+	   
+	   float NSCALE = 0.20f;
+	   int NSCALEX = (int) ((1/NSCALE));
+	   int NSCALEY = (int) ((1/NSCALE));
+	   
+	   //CTAttributes.LOGGER.info(SkillTree.SKILL_TREE.getData(LogicalSide.CLIENT));	  
+	   
+	   Optional<Collection<JsonObject>> skillTree = SkillTree.SKILL_TREE.getLoginSkillData();
+	   Collection<JsonObject> skillTreeData = skillTree.get();
+
+	   for (JsonObject serializedSkillData : skillTreeData) {
+		   int posX = GsonHelper.getAsInt(serializedSkillData, "x");
+		   int posY = GsonHelper.getAsInt(serializedSkillData, "y");
+		   
+		    matrix.pushPose();
+		    matrix.scale(NSCALE,NSCALE,NSCALE);
+			RenderSystem.setShaderColor(1, 1, 1, 1);
+		    RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		    
+			RenderSystem.setShaderTexture(0, SS_NODE);
+			RenderUtil.renderCustomSizedTexture(matrix, (this.width/2 * NSCALEX) + (posX * NSCALEX), (this.height/2 * NSCALEY) + (posY * NSCALEY), 40,40,40,40,40, 40);
+
+			matrix.popPose();
+	   }
+		   
+   }
 }

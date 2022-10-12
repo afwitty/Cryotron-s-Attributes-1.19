@@ -1,7 +1,0 @@
-﻿Node ID,Name,Type,Connectors,Effects
-1,The Beginner,Special,0,Starting Node
-2,Attributes,Passive,1,"+2 to Strength, Dexterity and Intelligence"
-3,Aspect of the Adventurer,Notable,2,"+5 to Strength, Dexterity and Intelligence"
-4,Attributes,Passive,3,"+2 to Strength, Dexterity and Intelligence"
-5,Path of the Adventurer,Special,4,"+5 to Strength, Dexterity and Intelligence
-Starts in Path of the Adventurer Node in Pre-Character Skill Tree"
