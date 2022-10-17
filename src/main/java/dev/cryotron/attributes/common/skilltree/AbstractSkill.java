@@ -54,9 +54,9 @@ public class AbstractSkill implements ModifierSource {
 	  
 	  //private SkillCategory category = CATEGORY_BASE;
 	  
-	  private boolean hiddenUnlessAllocated = false;
+	  //private boolean hiddenUnlessAllocated = false;
 	  
-	  //private SkillTreePoint<? extends AbstractSkill> treePoint = null;
+	  private SkillTreePoint<? extends AbstractSkill> treePoint = null;
 	  
 	  private ResourceLocation customSkillType = null;
 	  
@@ -71,9 +71,9 @@ public class AbstractSkill implements ModifierSource {
 	    //this.unlocalizedKey = String.format("Skill.%s.%s", new Object[] { name.func_110624_b(), name.func_110623_a() });
 	  }
 	  
-//	  protected SkillTreePoint<? extends AbstractSkill> initSkillTreePoint() {
-//	    return new SkillTreePoint(this, getOffset());
-//	  }
+	  protected SkillTreePoint<? extends AbstractSkill> initSkillTreePoint() {
+	    return new SkillTreePoint(this, getOffset());
+	  }
 	  
 //	  protected void invalidate(LogicalSide side) {
 //	    this.busWrapper.unregisterAll();
@@ -91,11 +91,11 @@ public class AbstractSkill implements ModifierSource {
 	    return this.offset;
 	  }
 	  
-//	  public final SkillTreePoint<? extends AbstractSkill> getPoint() {
-//	    if (this.treePoint == null)
-//	      this.treePoint = initSkillTreePoint(); 
-//	    return this.treePoint;
-//	  }
+	  public final SkillTreePoint<? extends AbstractSkill> getPoint() {
+	    if (this.treePoint == null)
+	      this.treePoint = initSkillTreePoint(); 
+	    return this.treePoint;
+	  }
 	  
 	  public ResourceLocation getRegistryName() {
 	    return this.registryName;
@@ -106,10 +106,10 @@ public class AbstractSkill implements ModifierSource {
 //	    return (T)this;
 //	  }
 	  
-	  public <T> T setHiddenUnlessAllocated(boolean hiddenUnlessAllocated) {
-	    this.hiddenUnlessAllocated = hiddenUnlessAllocated;
-	    return (T)this;
-	  }
+//	  public <T> T setHiddenUnlessAllocated(boolean hiddenUnlessAllocated) {
+//	    this.hiddenUnlessAllocated = hiddenUnlessAllocated;
+//	    return (T)this;
+//	  }
 	  
 //	  public boolean canApplySource(Player player, LogicalSide dist) {
 //	    return !ResearchHelper.getProgress(player, dist).getSkillData().isSkillSealed(this);
@@ -292,14 +292,14 @@ public class AbstractSkill implements ModifierSource {
 	    JsonObject data = new JsonObject();
 	    data.addProperty("registry_name", getRegistryName().toString());
 	    if (getCustomSkillType() != null)
-	      data.addProperty("Skill_class", getCustomSkillType().toString()); 
+	    data.addProperty("Skill_class", getCustomSkillType().toString()); 
 	    data.addProperty("x", Float.valueOf((getOffset()).x));
 	    data.addProperty("y", Float.valueOf((getOffset()).y));
 	    data.addProperty("name", this.unlocalizedKey);
-	    data.addProperty("hiddenUnlessAllocated", Boolean.valueOf(this.hiddenUnlessAllocated));
+	    //data.addProperty("hiddenUnlessAllocated", Boolean.valueOf(this.hiddenUnlessAllocated));
 	    JsonObject SkillData = new JsonObject();
 	    serializeData(SkillData);
-	    data.add("data", (JsonElement)SkillData);
+	    //data.add("data", (JsonElement)SkillData);
 	    return data;
 	  }
 	  

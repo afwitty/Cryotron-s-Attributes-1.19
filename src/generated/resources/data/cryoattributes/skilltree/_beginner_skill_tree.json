@@ -1,0 +1,40 @@
+{
+  "cryoattributes:beginner_node_1": {
+    "connection": [],
+    "registry_name": "cryoattributes:beginner_node_1",
+    "x": 0.0,
+    "y": -0.0
+  },
+  "cryoattributes:beginner_node_2": {
+    "connection": [
+      "cryoattributes:beginner_node_1"
+    ],
+    "registry_name": "cryoattributes:beginner_node_2",
+    "x": 0.0,
+    "y": -20.0
+  },
+  "cryoattributes:beginner_node_3": {
+    "connection": [
+      "cryoattributes:beginner_node_2"
+    ],
+    "registry_name": "cryoattributes:beginner_node_3",
+    "x": 0.0,
+    "y": -40.0
+  },
+  "cryoattributes:beginner_node_4": {
+    "connection": [
+      "cryoattributes:beginner_node_3"
+    ],
+    "registry_name": "cryoattributes:beginner_node_4",
+    "x": 0.0,
+    "y": -60.0
+  },
+  "cryoattributes:beginner_node_5": {
+    "connection": [
+      "cryoattributes:beginner_node_4"
+    ],
+    "registry_name": "cryoattributes:beginner_node_5",
+    "x": 0.0,
+    "y": -80.0
+  }
+}

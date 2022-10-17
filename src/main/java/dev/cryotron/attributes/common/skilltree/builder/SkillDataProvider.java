@@ -33,6 +33,7 @@ public abstract class SkillDataProvider implements DataProvider {
 	        Path path = this.generator.getOutputFolder();
 
 	        List<FinishedSkill> builtSkills = new ArrayList<>();
+	        
 	        this.registerSkills(finishedSkill -> {
 	            ResourceLocation SkillName = finishedSkill.skill.getRegistryName();
 	            Point.Float offset = finishedSkill.skill.getOffset();
@@ -49,17 +50,19 @@ public abstract class SkillDataProvider implements DataProvider {
 	        JsonObject allSkills = new JsonObject();
 	        builtSkills.sort(Comparator.naturalOrder());
 	        builtSkills.forEach(Skill -> allSkills.add(Skill.skill.getRegistryName().toString(), Skill.serialize()));
-	        this.saveSkillFile(cache, allSkills, path.resolve("data/ctattributes/skilltree/_beginner_skill_tree.json"));
+	        this.saveSkillFile(cache, allSkills, path.resolve("data/cryoattributes/skilltree/_beginner_skill_tree.json"));
 	   }
 
 	   private void saveSkillFile(CachedOutput cache, JsonElement Skill, Path filePath) {
 	        try {
-	            String SkillJson = GSON.toJson(Skill);
-	            
-                Files.createDirectories(filePath.getParent());
-                try (BufferedWriter bufferedwriter = Files.newBufferedWriter(filePath)) {
-                    bufferedwriter.write(SkillJson);
-                }
+//	            String skillJson = GSON.toJson(Skill);
+//
+//                Files.createDirectories(filePath.getParent());
+//                try (BufferedWriter bufferedwriter = Files.newBufferedWriter(filePath)) {
+//                    bufferedwriter.write(skillJson);
+//                }
+                
+                DataProvider.saveStable(cache, Skill, filePath);
 	         
 //	            String SkillHash = HASH_FUNCTION.hashUnencodedChars(SkillJson).toString();
 //	            if (!Objects.equals(cache.getPreviousHash(filePath), SkillHash) || !Files.exists(filePath)) {

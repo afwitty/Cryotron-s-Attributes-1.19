@@ -24,7 +24,6 @@ public class SkillHandler {
 		    return ((Type<T>)CONVERTER_MAP.getOrDefault(alternativeBase, DEFAULT)).convert(perkKey, x, y);
 		  }
 		  
-	  
 		public static void init() {
 			registerConverter(DEFAULT.getKey(), AbstractSkill::new);
 		}
