@@ -1,0 +1,21 @@
+Prefix Keywords for a type of Skill Node:
+	- Basic <No Special Features>
+	- Notable <Lines and 1.5x the size of Basic Skill Nodes>
+	- Keystone <Bigger circle with 2.5x the size of Basic Skill Nodes>
+	- Special
+
+Suffix Keywords for a type of Skill Node:
+	- Passive <Circle>
+	- Choice <Hexagon>
+	- Socket <Square>
+
+Types of Skill Nodes:
+
+  Passive Nodes (Circles):
+	- Basic Passive Node (Just a basic circle, can be considered a "Basic Skill Node")
+	- Notable Passive Node (Perpendicular lines along the circumference and is 1.5x the size of Basic Passive Nodes) 
+	- Keystone Passive Node (Bigger Circle with a really thick circumference and is 2.5x the size of Basic Passive Nodes)
+
+  Choice Nodes (Hexagon)
+  Socket Nodes (Square)
+  

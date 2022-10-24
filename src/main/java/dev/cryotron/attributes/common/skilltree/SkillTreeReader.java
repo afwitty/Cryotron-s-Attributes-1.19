@@ -40,15 +40,7 @@ public class SkillTreeReader extends SimpleJsonResourceReloadListener {
                 .mapValue(JsonElement::getAsJsonObject)
                 .valueStream()
                 .collect(Collectors.toList());
-//		CTAttributes.LOGGER.info("Reading: " + loadingNodes.toString());
-//		Object[] arr = loadingNodes.toArray();
-//		for (int i = 0; i < arr.length; i++) {
-//			CTAttributes.LOGGER.info("Object: " + arr[i]);		
-//		}
 		SkillTree.SKILL_TREE.updateOriginSkillTree(loadSkillTree(loadingNodes));
-		//CTAttributes.LOGGER.info("Contents of the New Tree: " +  SkillTree.SKILL_TREE.getLoginSkillData());
-		
-		// TODO: Maybe the order of the data loading to the game matters? Might need to get into sorting later. -CT
 	}
 
 	public static SkillTreeData loadSkillTree( Collection<JsonObject> nodeObjects ) {
@@ -78,17 +70,19 @@ public class SkillTreeReader extends SimpleJsonResourceReloadListener {
             // TODO: Implement data later.
 			
             LoadedSkillData connector = newTree.addSkill(skill, serializedSkillData);
-//            if (serializedSkillData.has("connection")) {
-//                JsonArray connectionArray = GsonHelper.getAsJsonArray(serializedSkillData, "connection");
-//                for (int i = 0; i < connectionArray.size(); i++) {
-//                    JsonElement connection = connectionArray.get(i);
-//                    String connectionStr = connection.toString();
-//                   // ResourceLocation skillConnect = new ResourceLocation();
-////        			CTAttributes.LOGGER.info("Connection: " + connectedPerkKey);
-////                    
-//                    connector.addConnection(new ResourceLocation( connectionStr));
-//                }
-//            }
+            if (serializedSkillData.has("connection")) {
+                JsonArray connectionArray = GsonHelper.getAsJsonArray(serializedSkillData, "connection");
+                for (int i = 0; i < connectionArray.size(); i++) {
+                    JsonElement connection = connectionArray.get(i);
+                    String connectionStr = connection.toString();
+                   // ResourceLocation skillConnect = new ResourceLocation();
+//        			CTAttributes.LOGGER.info("Connection: " + connectedPerkKey);
+//                  
+                    String subStr = connectionStr.substring(16, connectionStr.length() -1);
+                    CTAttributes.LOGGER.info(subStr);
+                    connector.addConnection(CTAttributes.id(subStr));
+                }
+            }
        			
 			count++;
 		}

@@ -16,11 +16,11 @@ public class SkillTreeData {
 		this.skills.add(data);
 		return data;
 	}
-//	
-//	public PreparedSkillTreeData prepare() {
-//		return PreparedSkillTreeData.create(this.skills);
-//	}
-//	
+	
+	public PreparedSkillTreeData prepare() {
+		return PreparedSkillTreeData.create(this.skills);
+	}
+	
   public Collection<JsonObject> getAsDataTree() {
 	    return (Collection<JsonObject>)this.skills.stream().map(LoadedSkillData::getSkillDataObject).collect(Collectors.toList());
   }

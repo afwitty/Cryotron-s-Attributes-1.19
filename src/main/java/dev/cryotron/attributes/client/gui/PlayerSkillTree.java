@@ -1,14 +1,11 @@
 package dev.cryotron.attributes.client.gui;
 
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.lwjgl.opengl.GL11;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -24,18 +21,15 @@ import dev.cryotron.attributes.CTAttributes;
 import dev.cryotron.attributes.client.KeySetup;
 import dev.cryotron.attributes.common.skilltree.AbstractSkill;
 import dev.cryotron.attributes.common.skilltree.SkillTree;
-import dev.cryotron.attributes.common.skilltree.SkillTreeReader;
 import dev.cryotron.attributes.setup.deferredregistries.RegisteredSounds;
-import dev.cryotron.attributes.util.MapStream;
 import dev.cryotron.attributes.util.RenderingUtils;
 import dev.cryotron.attributes.util.Vector3;
 //import dev.cryotron.utilities.util.*;
 import dev.cryotron.utilities.util.aoa.RenderUtil;
+
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -44,8 +38,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.LogicalSide;
 
 public class PlayerSkillTree extends Screen {
 
@@ -94,10 +86,19 @@ public class PlayerSkillTree extends Screen {
 		
 		xMouse = mouseX;
 		yMouse = mouseY;
+		float NSCALE = 0.20f;
 		
 		renderDirtBackground(0);
+		
+		matrix.pushPose();
+		matrix.scale(NSCALE,NSCALE,NSCALE);
+		
+		//renderNodes(matrix);
+		
 		renderConnectors(matrix);
-		renderNodes(matrix);
+		
+		matrix.popPose();
+		
 
 		//RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 		
@@ -116,9 +117,7 @@ public class PlayerSkillTree extends Screen {
 		//RenderSystem.setShaderColor(1, 1, 1, 1);
 		matrix.popPose();
 		
-		
-
-
+	
 	}
 	
 	@Override
@@ -186,11 +185,17 @@ public class PlayerSkillTree extends Screen {
    }
    
    public boolean mouseClicked(double p_97343_, double p_97344_, int p_97345_) {
+	   float NSCALE = 0.20f;
+	   float NSCALEI = (int) 1/NSCALE;
+	   
 	      if (p_97345_ == 0) {
 	         int i = (this.width - 252) / 2;
 	         int j = (this.height - 140) / 2;
 	         
-	         CTAttributes.LOGGER.info("A mouse has been clicked in " + xMouse + "," + yMouse);
+	         int locX = (int) (xMouse * NSCALEI);
+	         int locY = (int) (yMouse * NSCALEI);
+	         
+	         //CTAttributes.LOGGER.info("A mouse has been clicked in " + locX + "," + locY);
 
 //	         for(AdvancementTab advancementtab : this.tabs.values()) {
 //	            if (advancementtab.getPage() == tabPage && advancementtab.isMouseOver(i, j, p_97343_, p_97344_)) {
@@ -204,13 +209,10 @@ public class PlayerSkillTree extends Screen {
 	   }
    
    private void renderNodes(PoseStack matrix) {
-	   // TODO: Find a way to render a node.
 	   
 	   float NSCALE = 0.20f;
 	   int NSCALEX = (int) ((1/NSCALE));
-	   int NSCALEY = (int) ((1/NSCALE));
-	   
-	   //CTAttributes.LOGGER.info(SkillTree.SKILL_TREE.getData(LogicalSide.CLIENT));	  
+	   int NSCALEY = (int) ((1/NSCALE));	   
 	   
 	   Optional<Collection<JsonObject>> skillTree = SkillTree.SKILL_TREE.getLoginSkillData();
 	   Collection<JsonObject> skillTreeData = skillTree.get();
@@ -219,20 +221,24 @@ public class PlayerSkillTree extends Screen {
 		   int posX = GsonHelper.getAsInt(serializedSkillData, "x");
 		   int posY = GsonHelper.getAsInt(serializedSkillData, "y");
 		   
+		   int locX = (this.width/2 * NSCALEX) + (posX * NSCALEX);
+		   int locY = (this.height/2 * NSCALEY) + (posY * NSCALEY);
+		   
 		   // Rendering a Node
-		    matrix.pushPose();
-		    matrix.scale(NSCALE,NSCALE,NSCALE);
 			RenderSystem.setShaderColor(1, 1, 1, 1);
 		    RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		    
 			RenderSystem.setShaderTexture(0, SS_NODE);
-			RenderUtil.renderCustomSizedTexture(matrix, (this.width/2 * NSCALEX) + (posX * NSCALEX), (this.height/2 * NSCALEY) + (posY * NSCALEY), 40,40,40,40,40, 40);
+			RenderUtil.renderCustomSizedTexture(matrix, locX, locY, 40,40,40,40,40, 40);
 
-			matrix.popPose();
+			CTAttributes.LOGGER.info("[renderNodes] A node has been rendered in: (" + (locX) + ", " + (locY) + ")");
+			
 	   }
    }
 	   
    private void renderConnectors(PoseStack matrix) {
+	   
+	   TextureManager tm = minecraft.getTextureManager();
 	   
 	   float NSCALE = 0.20f;
 	   int NSCALEX = (int) ((1/NSCALE));
@@ -243,43 +249,55 @@ public class PlayerSkillTree extends Screen {
 	   RenderSystem.setShaderColor(1, 1, 1, 1);
 	   RenderSystem.setShader(GameRenderer::getPositionTexShader);
 	   RenderSystem.setShaderTexture(0, SS_CONNECTOR);
-	   VertexFormat.Mode vmode = Mode.LINES;
-	   RenderingUtils.draw(vmode, DefaultVertexFormat.POSITION_COLOR_TEX, buf -> {
-	          for (Tuple<AbstractSkill, AbstractSkill> skillConnection : (Iterable<Tuple<AbstractSkill, AbstractSkill>>)SkillTree.SKILL_TREE.getConnections()) {
+	   tm.bindForSetup(SS_CONNECTOR);
+//       TextureCTA.TEX_GUI_SKILLNODE_CONNECTOR.bindTexture();
+	   RenderSystem.bindTexture(tm.getTexture(SS_CONNECTOR).getId());
+	   VertexFormat.Mode vfm = Mode.QUADS;
+	   	   
+	   RenderingUtils.draw(vfm, DefaultVertexFormat.POSITION_COLOR_TEX, buf -> {
+	          for (Tuple<AbstractSkill, AbstractSkill> skillConnection : (Iterable<Tuple<AbstractSkill, AbstractSkill>>) SkillTree.SKILL_TREE.getConnections()) {
                 Point.Float offsetOne = skillConnection.getA().getPoint().getOffset();
                 Point.Float offsetTwo = skillConnection.getB().getPoint().getOffset();
-	            drawConnection(buf, matrix, offsetOne, offsetTwo);
+	            drawConnection(buf, matrix, offsetOne, offsetTwo);	          
 	          } 
 	        });
-	   //RenderUtil.renderCustomSizedTexture(matrix, 100,100, 40,40,40,40,40, 40);
+	   	   
 	   RenderSystem.disableBlend();
 	   
+
    }
 		   
    private void drawConnection(BufferBuilder vb, PoseStack renderStack, Point.Float source, Point.Float target) {   
-       Vector3 fromNode = new Vector3(source.x, source.y, 0);
-       Vector3 toNode   = new Vector3(target.x, target.y, 0);
-//
-//       double width = 4.0D * this.sizeHandler.getScalingFactor();
-//
+	   
+	   float NSCALE = 0.20f;
+	   int NSCALEX = (int) ((1/NSCALE));
+	   int NSCALEY = (int) ((1/NSCALE));
+	   
+       Vector3 fromNode = new Vector3((this.width/2 * NSCALEX) + (source.x * NSCALEX),  (this.height/2 * NSCALEY) + (source.y * NSCALEY), 0);
+       Vector3 toNode   = new Vector3((this.width/2 * NSCALEX) + (target.x * NSCALEX),  (this.height/2 * NSCALEY) + (target.y * NSCALEY), 0);
+
+       double width = 4.0D * NSCALE;
+
        Vector3 dir = toNode.clone().subtract(fromNode);
-       Vector3 degLot = dir.clone().crossProduct(new Vector3(0, 0, 1)).normalize().multiply(width);//.multiply(j == 0 ? 1 : -1);
-//
-       Vector3 vec00 = fromNode.clone().add(degLot);
+       Vector3 degLot = dir.clone().crossProduct(new Vector3(0, 0, 1)).normalize().multiply(width);
+       
+       Vector3 vec00 = fromNode.clone().add(degLot);   
        Vector3 vecV = degLot.clone().multiply(-2);
 
-       Matrix4f offset = renderStack.last().pose();
+       Matrix4f offset = renderStack.last().pose(); // Identity Matrix
+
        for (int i = 0; i < 4; i++) {
            int u = ((i + 1) & 2) >> 1;
            int v = ((i + 2) & 2) >> 1;
-
+           
            Vector3 pos = vec00.clone().add(dir.clone().multiply(u)).add(vecV.clone().multiply(v));
+           
            pos.drawPos(offset, vb)
-            .color(1,1,1,1)
+            .color(255, 255, 255, 255)
             .uv(u, v)
            	.endVertex();       
-
        }
+    
    }
-   
+      
 }

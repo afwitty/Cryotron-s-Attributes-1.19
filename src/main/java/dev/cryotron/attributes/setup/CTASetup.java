@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 
 import dev.cryotron.attributes.CTAttributes;
 import dev.cryotron.attributes.client.events.ClientTickEvent;
+import dev.cryotron.attributes.client.events.TotemOfInvulnerabilityClientEvent;
 import dev.cryotron.attributes.common.skilltree.SkillHandler;
 import dev.cryotron.attributes.common.skilltree.SkillTree;
 import dev.cryotron.attributes.common.skilltree.SkillTreeReader;
@@ -22,6 +23,10 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.server.ServerStoppedEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -35,9 +40,13 @@ public class CTASetup {
 	
 	
 	public  final 	IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+    private List<ServerLifecycleListener> serverLifecycleListeners = Lists.newArrayList();
 	public  final static String TAB_NAME = "ctattributes_group";
     public  final static CreativeModeTab ITEM_GROUP = new CreativeModeTab(TAB_NAME) {
-        @Override
+    
+
+    	
+    	@Override
         public ItemStack makeIcon() {
             return new ItemStack(Items.DEEPSLATE_LAPIS_ORE);
         }
@@ -48,19 +57,23 @@ public class CTASetup {
 		modEventBus.addListener(this::commonSetup);
 			
         modEventBus.addListener(EventPriority.NORMAL, false, FMLClientSetupEvent.class, CTASetup::clientSetup);        
-	}
+    }
 	
 	
 	public  void postInit() {
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         
         forgeBus.addListener(this::onRegisterReloadListeners);
+
+        this.serverLifecycleListeners.add(ServerLifecycleListener.start(SkillTree.SKILL_TREE::setupServerSkillTree));
         
 	}
 	
     public  void commonSetup(final FMLCommonSetupEvent event) {    	
     	NetworkHandler.init();
     	SkillHandler.init();
+    	
+
 
     	//SkillTreeReader.;
     	
@@ -69,7 +82,14 @@ public class CTASetup {
     public static void clientSetup(FMLClientSetupEvent event) {	
 
     	ClientTickEvent.init();
-
+    	
+    }
+    
+    public void attachEventHandlers(IEventBus eventBus) {
+        eventBus.addListener(this::onServerStop);
+        eventBus.addListener(this::onServerStopping);
+        eventBus.addListener(this::onServerStarting);
+        eventBus.addListener(this::onServerStarted);
     }
     
     
@@ -98,7 +118,23 @@ public class CTASetup {
 		    
 	  }
 	  
+	  /*
+	   * GENERIC EVENTS
+	   */
+	  
 	  public  void onRegisterReloadListeners(AddReloadListenerEvent event) {
 		    event.addListener((PreparableReloadListener)SkillTreeReader.INST);
 		  }
+	  
+	  private void onServerStarted(ServerStartedEvent event) {
+	    this.serverLifecycleListeners.forEach(ServerLifecycleListener::onServerStart);
+	  }
+	  
+	  private void onServerStarting(ServerStartingEvent event) {}
+	  
+	  private void onServerStopping(ServerStoppingEvent event) {
+	    this.serverLifecycleListeners.forEach(ServerLifecycleListener::onServerStop);
+	  }
+	  
+	  private void onServerStop(ServerStoppedEvent event) {}
 }

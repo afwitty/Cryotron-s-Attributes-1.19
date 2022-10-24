@@ -29,17 +29,17 @@ public class SkillTree {
         return this.treeData.getData(side);
       }
       
-//      public Optional<AbstractSkill> getSkill(LogicalSide side, ResourceLocation key) {
-//        return getSkill(side, Skill -> key.equals(Skill.getRegistryName()));
-//      }
+      public Optional<AbstractSkill> getSkill(LogicalSide side, ResourceLocation key) {
+        return getSkill(side, Skill -> key.equals(Skill.getRegistryName()));
+      }
       
-//      public Optional<AbstractSkill> getSkill(LogicalSide side, Predicate<AbstractSkill> test) {
-//        return getData(side).flatMap(data -> data.getSkill(test));
-//      }
-//      
-//      public Optional<? extends AbstractSkill> getSkill(LogicalSide side, float x, float y) {
-//        return getData(side).flatMap(data -> data.getSkill(x, y));
-//      }
+      public Optional<AbstractSkill> getSkill(LogicalSide side, Predicate<AbstractSkill> test) {
+        return getData(side).flatMap(data -> data.getSkill(test));
+      }
+      
+      public Optional<? extends AbstractSkill> getSkill(LogicalSide side, float x, float y) {
+        return getData(side).flatMap(data -> data.getSkill(x, y));
+      }
       
 //      @Nullable
 //      public RootSkill getRootSkill(LogicalSide side, IConstellation constellation) {
@@ -54,9 +54,10 @@ public class SkillTree {
 //        return getData(side).<Collection<SkillTreePoint<?>>>map(PreparedSkillTreeData::getSkillPoints).orElse(Collections.emptyList());
 //      }
       
+      // If this works on server logically... why did AS made this in Client? -CT
       @OnlyIn(Dist.CLIENT)
       public Collection<Tuple<AbstractSkill, AbstractSkill>> getConnections() {
-        return getData(LogicalSide.CLIENT).<Collection<Tuple<AbstractSkill, AbstractSkill>>>map(PreparedSkillTreeData::getConnections).orElse(Collections.emptyList());
+        return getData(LogicalSide.SERVER).<Collection<Tuple<AbstractSkill, AbstractSkill>>>map(PreparedSkillTreeData::getConnections).orElse(Collections.emptyList());
       }
       
 //      public Optional<Long> getVersion(LogicalSide side) {
@@ -71,19 +72,20 @@ public class SkillTree {
         return Optional.<SkillTreeData>ofNullable(this.loadedSkillTree).map(SkillTreeData::getAsDataTree);
       }
       
-      @OnlyIn(Dist.CLIENT)
-      public void receiveSkillTree(PreparedSkillTreeData serverTreeData) {
-        updateTreeData(LogicalSide.CLIENT, serverTreeData);
-      }
+//      @OnlyIn(Dist.CLIENT)
+//      public void receiveSkillTree(PreparedSkillTreeData serverTreeData) {
+//        updateTreeData(LogicalSide.CLIENT, serverTreeData);
+//      }
       
-      public void clearCache(LogicalSide side) {
-       //getData(side).ifPresent(data -> data.clearSkillCache(side));
-        updateTreeData(side, null);
-      }
+      // ON SERVER STOP -CT
+//      public void clearCache(LogicalSide side) {
+//       //getData(side).ifPresent(data -> data.clearSkillCache(side));
+//        updateTreeData(side, null);
+//      }
       
       public void setupServerSkillTree() {
         if (this.loadedSkillTree != null) {
-          //updateTreeData(LogicalSide.SERVER, this.loadedSkillTree.prepare());
+          updateTreeData(LogicalSide.SERVER, this.loadedSkillTree.prepare());
           CTAttributes.LOGGER.info("Loaded SkillTree!");
         } else {
           CTAttributes.LOGGER.info("No SkillTree data found!");

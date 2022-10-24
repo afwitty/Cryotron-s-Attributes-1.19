@@ -27,7 +27,7 @@ public class LoadedSkillData {
         return Collections.unmodifiableSet(connections);
     }
 
-    public AbstractSkill getPerk() {
+    public AbstractSkill getSkill() {
         return skill;
     }
 
@@ -47,4 +47,5 @@ public class LoadedSkillData {
     public int hashCode() {
         return Objects.hash(skill.getRegistryName());
     }
+
 }

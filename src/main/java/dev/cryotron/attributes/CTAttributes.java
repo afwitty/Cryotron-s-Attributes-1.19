@@ -9,6 +9,7 @@ import dev.cryotron.attributes.common.CTAttributesConfig;
 import dev.cryotron.attributes.setup.CTASetup;
 import dev.cryotron.attributes.setup.deferredregistries.CTARegistration;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.fml.common.Mod;
 
@@ -19,6 +20,7 @@ public class CTAttributes {
 	
 	public static final Logger LOGGER = LogManager.getLogger(ID);
 	
+	private static CTAttributes instance;
 	private final CTASetup setup = new CTASetup();
 	
 	public CTAttributes() {
@@ -33,6 +35,10 @@ public class CTAttributes {
 		setup.preInit();
 		
 		setup.postInit();
+		
+		instance = this;
+		
+		this.setup.attachEventHandlers(MinecraftForge.EVENT_BUS);
 		
     	// PreInit
 //    	CTASetup.preInit();	    	
